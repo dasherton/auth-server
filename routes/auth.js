@@ -1,14 +1,21 @@
 const router = require('Express').Router();
 const User = require('../models/user');
 
-router.post('/register', (request, response) => {
+router.post('/register', async (request, response) => {
 	const user = new User({
-		name: 'David',
-		email: 'My Email',
-		password: '12345'
+		name: request.body.name,
+		email: request.body.email,
+		password: request.body.password
 	});
 
-	response.send(user);
+	try {
+		const saved = await user.save();
+	} catch(err) {
+		response.status(400).send(err);
+		response.send(saved);
+	}
+
+	response.send('Save user to database!');
 });
 
 module.exports = router;
