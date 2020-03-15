@@ -22,12 +22,10 @@ router.post('/register', async (request, response) => {
 
 	try {
 		const saved = await user.save();
+		response.send({user: user._id});
 	} catch(err) {
 		response.status(400).send(err);
-		response.send(saved);
 	}
-
-	response.send('Save user to database!');
 });
 
 module.exports = router;
