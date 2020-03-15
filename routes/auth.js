@@ -16,6 +16,12 @@ router.post('/register', async (request, response) => {
 		password: request.body.password
 	});
 
+	const emailExists = await User.findOne({email: request.body.email});
+
+	if(emailExists) {
+		return response.status(400).send('Email already exists');
+	}
+
 	try {
 		const saved = await user.save();
 	} catch(err) {
