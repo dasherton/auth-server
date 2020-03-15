@@ -3,12 +3,14 @@ const User = require('../models/user');
 const { registerValidation, loginValidation } = require('../validation');
 const bcrypt = require('bcrypt');
 
+const checkEmailExists = email => User.findOne({email: email});
+
 router.post('/register', async (request, response) => {
 
 	const {error} = registerValidation(request.body);
 	if(error) return response.status(400).send(error.details[0].message);
 	
-	const emailExists = await User.findOne({email: request.body.email});
+	const emailExists = await checkEmailExists(request.body.email);
 	if(emailExists) return response.status(400).send('Email already exists');
 	
 	const salt = await bcrypt.genSalt(10);
@@ -32,7 +34,7 @@ router.post('/login', async (request, response) => {
 	const {error} = loginValidation(request.body);
 	if(error) return response.status(400).send(error.details[0].message);
 
-	const emailExists = await User.findOne({email: request.body.email});
+	const emailExists = await checkEmailExists(request.body.email);
 	if(!emailExists) return response.status(400).send('Email does not exist');
 	
 	response.end();
