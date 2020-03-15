@@ -1,21 +1,10 @@
 const router = require('Express').Router();
 const User = require('../models/user');
-const Joi = require('@hapi/joi');
-
-const schema = Joi.object({ 
-	name: Joi.string()
-		.required(),
-	email: Joi.string()
-		.required()
-		.email(),
-	password: Joi.string()
-		.min(6)
-		.required()
-});
+const { registerValidation } = require('../validation');
 
 router.post('/register', async (request, response) => {
 
-	const {error} = schema.validate(request.body);
+	const {error} = registerValidation(request.body);
 
 	if(error) {
 		return response.status(400).send(error.details[0].message);
