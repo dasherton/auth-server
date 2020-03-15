@@ -36,8 +36,11 @@ router.post('/login', async (request, response) => {
 
 	const user = await findUser(request.body.email);
 	if(!user) return response.status(400).send('Email does not exist');
+
+	const validPassword = await bcrypt.compare(request.body.password, user.password);
+	if(!validPassword) return response.status(400).send('Password is incorrect');
 	
-	response.end();
+	response.send('Logged in!');
 })
 
 module.exports = router;
