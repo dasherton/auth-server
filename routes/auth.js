@@ -6,6 +6,11 @@ const { registerValidation, loginValidation } = require('../validation');
 
 const findUser = email => User.findOne({email: email});
 
+const hashString = async (str, saltRounds = 10) => {
+	const salt = await bcrypt.genSalt(saltRounds);
+	return bcrypt.hash(str, salt);
+}
+
 router.post('/register', async (request, response) => {
 
 	const {error} = registerValidation(request.body);
@@ -13,14 +18,13 @@ router.post('/register', async (request, response) => {
 	
 	const existingUser = await findUser(request.body.email);
 	if(existingUser) return response.status(400).send('Email already exists');
-	
-	const salt = await bcrypt.genSalt(10);
-	const hashPassword = await bcrypt.hash(request.body.password, salt);
+
+	const hashedPassword = await hashString(request.body.password);
 	
 	const user = new User({
 		name: request.body.name,
 		email: request.body.email,
-		password: hashPassword
+		password: hashedPassword
 	});
 	
 	try {
