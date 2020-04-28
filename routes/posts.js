@@ -1,6 +1,7 @@
 const router = require('Express').Router();
+const verifyToken = require('./verifyToken');
 
-router.get('/', (request, response) => {
+router.get('/', verifyToken, (request, response) => {
 	response.json({
 		posts: [
 			{
